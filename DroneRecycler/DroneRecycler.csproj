@@ -1,0 +1,55 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+	<LangVersion>latest</LangVersion>
+	<Version>1.0.0</Version>
+	<Authors>GChinchi</Authors>
+	<Description>The Equipment Drone uses the Recycler on command.</Description>
+	<RepositoryUrl>https://github.com/schinchi/DroneRecycler</RepositoryUrl>
+	<PatchDir>$(SolutionDir)UNetWeaver\</PatchDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BepInEx.Analyzers" Version="1.0.*">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="BepInEx.Core" Version="5.4.21" GeneratePathProperty="true" />
+	<PackageReference Include="MMHOOK.RoR2" Version="2022.9.20" NoWarn="NU1701" />
+    <PackageReference Include="RiskOfRain2.GameLibs" Version="1.2.4-r.0" GeneratePathProperty="true" />
+    <PackageReference Include="UnityEngine.Modules" Version="2019.4.26" GeneratePathProperty="true" />
+  </ItemGroup>
+
+  <Target Name="ValidateVersion" AfterTargets="PostBuildEvent">
+    <Exec Command="pwsh –ExecutionPolicy Bypass -Command &quot;&amp; '$(SolutionDir)Build\CheckVersion.ps1' '$(OutDir)$(TargetFileName)' '$(Version)' '$(PkgBepInEx_Core)\..\..\bepinex.baselib\5.4.20\lib\netstandard2.0\BepInEx.dll' '$(PkgUnityEngine_Modules)\lib\netstandard2.0\UnityEngine.dll'&quot;" />
+  </Target>
+
+  <Target Name="Weave" AfterTargets="ValidateVersion">
+	<Copy SourceFiles="$(OutDir)$(TargetFileName)" DestinationFolder="$(PatchDir)" />
+	<Exec Command="Unity.UNetWeaver.exe &quot;$(PkgUnityEngine_Modules)\lib\netstandard2.0\UnityEngine.CoreModule.dll&quot; &quot;$(PkgRiskOfRain2_GameLibs)\lib\netstandard2.0\com.unity.multiplayer-hlapi.Runtime.dll&quot; &quot;$(PatchDir)Patched&quot; &quot;$(TargetFileName)&quot; &quot;&quot;" WorkingDirectory="$(PatchDir)" />
+  </Target>
+  
+  <Target Name="CopyToDev" AfterTargets="Weave" Condition="'$(Configuration)'=='Debug'">
+    <PropertyGroup>
+      <PluginDir>C:\Users\Chinchi\AppData\Roaming\r2modmanPlus-local\RiskOfRain2\profiles\Dev\BepInEx\plugins\$(Authors)-$(AssemblyName)\</PluginDir>
+    </PropertyGroup>
+    <Copy SourceFiles="$(PatchDir)Patched\$(TargetFileName)" DestinationFolder="$(PluginDir)" Condition="Exists($(PluginDir))" />
+    <Error Text="Plugin directory not found. Either the directory is incorrect or the plugin has not been installed." Condition="!Exists($(PluginDir))" />
+  </Target>
+
+  <Target Name="BuildRelease" AfterTargets="Weave" Condition="'$(Configuration)'=='Release'">
+    <Copy SourceFiles="$(PatchDir)Patched\$(TargetFileName)" DestinationFolder="$(SolutionDir)Thunderstore" />
+    <Copy SourceFiles="$(SolutionDir)README.MD" DestinationFolder="$(SolutionDir)Thunderstore" />
+    <Exec Command="pwsh –ExecutionPolicy Bypass -Command &quot;&amp; '$(SolutionDir)Build\BuildRelease.ps1' '$(Authors)' '$(AssemblyName)' '$(Version)' '$(RepositoryUrl)' '$(Description)'&quot;" />
+  </Target>
+
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\Chinchi\Desktop\VisualStudio\TestStuff\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="C:\Users\Chinchi\Desktop\VisualStudio\TestStuff\.editorconfig" />
+  </ItemGroup>
+ 
+</Project>
