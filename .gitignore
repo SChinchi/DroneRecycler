@@ -398,4 +398,7 @@ FodyWeavers.xsd
 *.sln.iml
 
 # Project specific
+Thunderstore/*.dll
 Thunderstore/*.zip
+UNetWeaver/DroneRecycler.dll
+UNetWeaver/Patched/
