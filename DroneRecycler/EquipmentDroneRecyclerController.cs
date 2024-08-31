@@ -19,7 +19,7 @@ namespace DroneRecycler
             NetworkInstanceId pickupNetId = pickup != null ? pickup.netId : NetworkInstanceId.Invalid;
             if (NetworkServer.active)
             {
-                RpcSetTargetClient(droneNetId, pickupNetId);
+                SetTargetInternal(droneNetId, pickupNetId);
                 return;
             }
             CmdSetTarget(droneNetId, pickupNetId);
@@ -27,12 +27,6 @@ namespace DroneRecycler
 
         [Command]
         private void CmdSetTarget(NetworkInstanceId droneNetId, NetworkInstanceId pickupNetId)
-        {
-            RpcSetTargetClient(droneNetId, pickupNetId);
-        }
-
-        [ClientRpc]
-        private void RpcSetTargetClient(NetworkInstanceId droneNetId, NetworkInstanceId pickupNetId)
         {
             SetTargetInternal(droneNetId, pickupNetId);
         }
@@ -43,6 +37,14 @@ namespace DroneRecycler
             drone = Util.FindNetworkObject(droneNetId)?.GetComponent<CharacterMaster>();
             drone.GetComponent<BaseAI>().customTarget.gameObject = pickup?.gameObject;
             enabled = drone && pickup;
+        }
+
+        private void Awake()
+        {
+            if (!NetworkServer.active)
+            {
+                enabled = false;
+            }
         }
 
         private void FixedUpdate()
