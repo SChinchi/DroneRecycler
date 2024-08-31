@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
 	<LangVersion>latest</LangVersion>
-	<Version>1.0.0</Version>
+	<Version>1.0.1</Version>
 	<Authors>Chinchi</Authors>
 	<Description>The Equipment Drone uses the Recycler on command.</Description>
 	<RepositoryUrl>https://github.com/schinchi/DroneRecycler</RepositoryUrl>
@@ -36,6 +36,7 @@
 
   <Target Name="BuildRelease" AfterTargets="Weave" Condition="'$(Configuration)'=='Release'">
     <Copy SourceFiles="$(PatchDir)Patched\$(TargetFileName)" DestinationFolder="$(SolutionDir)Thunderstore" />
+    <Copy SourceFiles="$(SolutionDir)README.md" DestinationFolder="$(SolutionDir)Thunderstore" />
     <Copy SourceFiles="$(SolutionDir)README.md" DestinationFolder="$(SolutionDir)Thunderstore" />
     <Exec Command="pwsh –ExecutionPolicy Bypass -Command &quot;&amp; '$(SolutionDir)Build\BuildRelease.ps1' '$(Authors)' '$(AssemblyName)' '$(Version)' '$(RepositoryUrl)' '$(Description)'&quot;" />
   </Target>
