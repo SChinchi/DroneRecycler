@@ -11,15 +11,14 @@ namespace DroneRecycler
             var minionGroup = MinionOwnership.MinionGroup.FindGroup(master.netId);
             if (minionGroup != null)
             {
+                var masterIndex = DroneRecycler.equipmentDroneIndex;
                 foreach (var minion in minionGroup.members)
                 {
-                    if (minion.gameObject.name.Contains("EquipmentDrone"))
+                    if (minion.gameObject && minion.gameObject.TryGetComponent<CharacterMaster>(out var minionMaster) &&
+                        minionMaster.masterIndex == masterIndex &&
+                        minionMaster.inventory.currentEquipmentIndex == RoR2Content.Equipment.Recycle.equipmentIndex)
                     {
-                        var minionMaster = minion.GetComponent<CharacterMaster>();
-                        if (minionMaster.inventory.currentEquipmentIndex == RoR2Content.Equipment.Recycle.equipmentIndex)
-                        {
-                            return minionMaster;
-                        }
+                        return minionMaster;
                     }
                 }
             }

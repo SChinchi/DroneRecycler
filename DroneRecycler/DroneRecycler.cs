@@ -23,6 +23,7 @@ namespace DroneRecycler
 
         internal static ConfigEntry<KeyCode> commandKey;
         internal static ConfigEntry<bool> isCommandManual;
+        internal static MasterCatalog.MasterIndex equipmentDroneIndex;
 
         public void Awake()
         {
@@ -57,13 +58,27 @@ namespace DroneRecycler
 
         private void Patch()
         {
+            var master = MasterCatalog.GetMasterPrefab(MasterCatalog.FindMasterIndex("EquipmentDroneMaster"));
+            if (master && master.TryGetComponent<CharacterMaster>(out var characterMaster))
+            {
+                equipmentDroneIndex = characterMaster.masterIndex;
+            }
+            else
+            {
+                Logger.LogError("EquipmentDrone not found");
+                return;
+            }
             PatchAI();
             PatchPlayer();
         }
 
         private void PatchAI()
         {
-            var master = MasterCatalog.GetMasterPrefab(MasterCatalog.FindMasterIndex("EquipmentDroneMaster"));
+            var master = MasterCatalog.GetMasterPrefab(equipmentDroneIndex);
+            if (!master)
+            {
+                return;
+            }
             var originalSkillDrivers = master.GetComponents<AISkillDriver>();
 
             var component = master.AddComponent<AISkillDriver>();
