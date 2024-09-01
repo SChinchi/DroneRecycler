@@ -9,7 +9,29 @@ namespace DroneRecycler
         private CharacterMaster drone;
         private GenericPickupController pickup;
 
-        public void SetTarget(CharacterMaster droneMaster, GenericPickupController pickup)
+        private void Awake()
+        {
+            if (!NetworkServer.active)
+            {
+                enabled = false;
+            }
+        }
+
+        private void FixedUpdate()
+        {
+            if (drone == null)
+            {
+                enabled = false;
+                return;
+            }
+            if (pickup == null || pickup.NetworkRecycled)
+            {
+                drone.GetComponent<BaseAI>().customTarget.gameObject = null;
+                enabled = false;
+            }
+        }
+
+        internal void SetTarget(CharacterMaster droneMaster, GenericPickupController pickup)
         {
             if (!Util.HasEffectiveAuthority(netIdentity))
             {
@@ -37,28 +59,6 @@ namespace DroneRecycler
             drone = Util.FindNetworkObject(droneNetId)?.GetComponent<CharacterMaster>();
             drone.GetComponent<BaseAI>().customTarget.gameObject = pickup?.gameObject;
             enabled = drone && pickup;
-        }
-
-        private void Awake()
-        {
-            if (!NetworkServer.active)
-            {
-                enabled = false;
-            }
-        }
-
-        private void FixedUpdate()
-        {
-            if (drone == null)
-            {
-                enabled = false;
-                return;
-            }
-            if (pickup == null || pickup.NetworkRecycled)
-            {
-                drone.GetComponent<BaseAI>().customTarget.gameObject = null;
-                enabled = false;
-            }
         }
     }
 }
