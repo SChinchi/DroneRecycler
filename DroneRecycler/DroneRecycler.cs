@@ -12,25 +12,28 @@ using UnityEngine;
 namespace DroneRecycler;
 
 [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
+[BepInDependency(RiskOfOptionsGUID, BepInDependency.DependencyFlags.SoftDependency)]
 public class DroneRecycler : BaseUnityPlugin
 {
     public const string PluginGUID = PluginAuthor + "." + PluginName;
     public const string PluginAuthor = "Chinchi";
     public const string PluginName = "DroneRecycler";
     public const string PluginVersion = "1.0.1";
+    internal const string RiskOfOptionsGUID = "com.rune580.riskofoptions";
 
     internal static MasterCatalog.MasterIndex equipmentDroneIndex = MasterCatalog.MasterIndex.none;
 
     public void Awake()
     {
-        Configs.Init(Config);
+        Log.Init(Logger);
+        Configs.Init(Config, Info.Location);
         Hooks.Init();
         RoR2Application.onLoad += Patch;
     }
 
     void Update()
     {
-        if (Run.instance && Configs.IsCommandManual.Value && Input.GetKeyDown(Configs.CommandKey.Value))
+        if (Run.instance && Configs.IsCommandManual.Value && Input.GetKeyDown(Configs.CommandKey.Value.MainKey) && Configs.CommandKey.Value.Modifiers.All(Input.GetKey))
         {
             if (MPEventSystemManager.eventSystems.Values.Any(x => x & x.currentSelectedGameObject)
                 || UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject
