@@ -14,7 +14,7 @@ namespace DroneRecycler
                 var masterIndex = DroneRecycler.equipmentDroneIndex;
                 foreach (var minion in minionGroup.members)
                 {
-                    if (minion.gameObject && minion.gameObject.TryGetComponent<CharacterMaster>(out var minionMaster) &&
+                    if (minion && minion.gameObject && minion.gameObject.TryGetComponent<CharacterMaster>(out var minionMaster) &&
                         minionMaster.masterIndex == masterIndex &&
                         minionMaster.inventory.currentEquipmentIndex == RoR2Content.Equipment.Recycle.equipmentIndex)
                     {
