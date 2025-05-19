@@ -121,12 +121,13 @@ public class DroneRecycler : BaseUnityPlugin
         // programmatically reorder them, so I remove and readd the ones I want at the end.
         foreach (var skillDriver in originalSkillDrivers)
         {
-            var copy = master.AddComponent<AISkillDriver>();
+            // The AISkillDriver can be subclassed so we can't rely on generics
+            var copy = master.AddComponent(skillDriver.GetType());
             foreach (var field in skillDriver.GetType().GetFields())
             {
                 field.SetValue(copy, field.GetValue(skillDriver));
             }
-            Component.Destroy(skillDriver);
+            DestroyImmediate(skillDriver);
         }
     }
 
