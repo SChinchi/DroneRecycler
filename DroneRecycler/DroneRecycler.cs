@@ -1,5 +1,4 @@
 ﻿using BepInEx;
-using BepInEx.Configuration;
 using RoR2;
 using RoR2.CharacterAI;
 using System.Linq;
@@ -20,21 +19,18 @@ public class DroneRecycler : BaseUnityPlugin
     public const string PluginName = "DroneRecycler";
     public const string PluginVersion = "1.0.1";
 
-    internal static ConfigEntry<KeyCode> commandKey;
-    internal static ConfigEntry<bool> isCommandManual;
     internal static MasterCatalog.MasterIndex equipmentDroneIndex = MasterCatalog.MasterIndex.none;
 
     public void Awake()
     {
-        commandKey = Config.Bind("Key Binds", "commandKey", KeyCode.C, "Which key to use to manually issue or revoke the recycling command");
-        isCommandManual = Config.Bind("Settings", "isCommandManual", false, "Whether assigning an Equipment Drone to recycle an item is done by pressing a key (see 'commandKey') after pinging a pickup or it is done automatically. If this is enabled, the 'commandKey' can further be used to revoke the command.");
+        Configs.Init(Config);
         Hooks.Init();
         RoR2Application.onLoad += Patch;
     }
 
     void Update()
     {
-        if (Run.instance && isCommandManual.Value && Input.GetKeyDown(commandKey.Value))
+        if (Run.instance && Configs.IsCommandManual.Value && Input.GetKeyDown(Configs.CommandKey.Value))
         {
             if (MPEventSystemManager.eventSystems.Values.Any(x => x & x.currentSelectedGameObject)
                 || UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject
@@ -64,7 +60,7 @@ public class DroneRecycler : BaseUnityPlugin
         }
         else
         {
-            Logger.LogError("EquipmentDrone not found");
+            Log.Error("EquipmentDrone not found");
             return;
         }
         PatchAI();
@@ -136,7 +132,7 @@ public class DroneRecycler : BaseUnityPlugin
         var playerMaster = MasterCatalog.GetMasterPrefab(MasterCatalog.FindMasterIndex("PlayerMaster"));
         if (playerMaster == null)
         {
-            Logger.LogError("PlayerMaster not found");
+            Log.Error("PlayerMaster not found");
             return;
         }
         playerMaster.AddComponent<EquipmentDroneRecyclerController>().enabled = false;

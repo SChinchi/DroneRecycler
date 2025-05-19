@@ -17,7 +17,7 @@ internal class Hooks
     private static bool IsTargetPickup(On.RoR2.CharacterAI.BaseAI.Target.orig_GetBullseyePosition orig, BaseAI.Target self, out Vector3 position)
     {
         var result = orig(self, out position);
-        result |= self.gameObject != null && self.gameObject.GetComponent<GenericPickupController>() != null;
+        result |= self.gameObject && self.gameObject.GetComponent<GenericPickupController>();
         return result;
     }
 
@@ -26,10 +26,10 @@ internal class Hooks
         orig(self, pingInfo);
         var pickup = self.pingIndicator?.pingTarget?.GetComponent<GenericPickupController>();
         pingedTarget = pickup;
-        if (pickup != null && !pickup.Recycled && !DroneRecycler.isCommandManual.Value)
+        if (pickup && !pickup.Recycled && !Configs.IsCommandManual.Value)
         {
             var droneMaster = Utils.FindEquipmentDroneWithRecycler(self.gameObject);
-            if (droneMaster != null)
+            if (droneMaster)
             {
                 self.GetComponent<EquipmentDroneRecyclerController>().SetTarget(droneMaster, pickup);
             }
