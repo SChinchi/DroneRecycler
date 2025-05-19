@@ -1,3 +1,10 @@
+**1.1.0**
+
+* Added Risk of Options compatibility.
+  * The command key config has changed its type in order to be supported by RoO. This will create some orphaned entries so you can delete the old cfg to generate a clean one. And don't forget to change its value if you didn't use the default one.
+* Fixed an NRE when pinging a pickup while a minion has already died.
+* Fixed a potential duplication bug when modifying the drone's AISkillDrivers.
+
 **1.0.1**
 
 * Updated for Seekers of the Storm.

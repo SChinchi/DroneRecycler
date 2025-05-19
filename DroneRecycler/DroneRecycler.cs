@@ -18,7 +18,7 @@ public class DroneRecycler : BaseUnityPlugin
     public const string PluginGUID = PluginAuthor + "." + PluginName;
     public const string PluginAuthor = "Chinchi";
     public const string PluginName = "DroneRecycler";
-    public const string PluginVersion = "1.0.1";
+    public const string PluginVersion = "1.1.0";
     internal const string RiskOfOptionsGUID = "com.rune580.riskofoptions";
 
     internal static MasterCatalog.MasterIndex equipmentDroneIndex = MasterCatalog.MasterIndex.none;
