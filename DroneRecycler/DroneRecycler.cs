@@ -122,6 +122,7 @@ public class DroneRecycler : BaseUnityPlugin
         {
             // The AISkillDriver can be subclassed so we can't rely on generics
             var copy = master.AddComponent(skillDriver.GetType());
+            ((AISkillDriver)copy).enabled = skillDriver.enabled;
             foreach (var field in skillDriver.GetType().GetFields())
             {
                 field.SetValue(copy, field.GetValue(skillDriver));
