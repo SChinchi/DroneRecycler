@@ -1,3 +1,7 @@
+**1.1.1**
+
+* Fixed an issue where recreated AISkillDrivers would default to enabled.
+
 **1.1.0**
 
 * Added Risk of Options compatibility.
